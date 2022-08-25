@@ -12,7 +12,7 @@ type Usecase interface {
 
 Repository Layer:
 type Repository interface {
-	Store(data []interface{})
+	Store(data []map[string]interface{})
 }
 
 sampleEventFromKafka.json
