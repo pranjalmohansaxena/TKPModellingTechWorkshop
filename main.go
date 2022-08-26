@@ -5,6 +5,7 @@ import (
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/tokopedia/TKPModellingTechWorkshop/delivery"
+	"github.com/tokopedia/TKPModellingTechWorkshop/usecase"
 )
 
 func main() {
@@ -35,10 +36,20 @@ func main() {
 	}
 	fmt.Println("Subscribed to Kafka Topic: ", topicName)
 
+	fmt.Println("Initializing Usecase Layer... ")
+	usecaseLayer, err := usecase.NewPipelineUsecase(usecase.Param{
+		Repository: nil, // need to pass the repository layer
+	})
+	if err != nil {
+		fmt.Println("Error occurred while initializing Usecase Layer as: ", err)
+		return
+	}
+	fmt.Println("Initialized Usecase Layer: ", usecaseLayer)
+
 	fmt.Println("Initializing Kafka Delivery Layer... ")
 	deliveryLayer, err := delivery.NewKafkaDeliveryLayer(delivery.KafkaDeliveryParams{
 		Consumer:  consumer,
-		Usecase:   nil, // need to give usecase here
+		Usecase:   usecaseLayer,
 		Timeout:   timeout,
 		BatchSize: batchSize,
 	})
