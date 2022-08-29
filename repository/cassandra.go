@@ -60,7 +60,7 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 		var columnName []string
 		var onlyColumn []string
 		var args []interface{}
-		var qm []string
+		var bindValues []string
 		c.rl.Take()
 		tableName := c.tableName
 		dataFields := make(map[string]interface{})
@@ -70,7 +70,7 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 			columnName = append(columnName, concat)
 			onlyColumn = append(onlyColumn, key)
 			args = append(args, value)
-			qm = append(qm, "?")
+			bindValues = append(bindValues, "?")
 		}
 		if c.shardDivisor > 1 {
 			clusterID, ok := dataFields[c.clusterKey].(int64)
@@ -85,7 +85,7 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			queryStmt := `INSERT INTO ` + c.keyspace + `.` + tableName + ` (` + strings.Join(onlyColumn, ",") + `)` + ` VALUES (` + strings.Join(qm, ",") + `)` + `;`
+			queryStmt := `INSERT INTO ` + c.keyspace + `.` + tableName + ` (` + strings.Join(onlyColumn, ",") + `)` + ` VALUES (` + strings.Join(bindValues, ",") + `)` + `;`
 			query := c.session.Query(queryStmt, args...)
 			err = query.Exec()
 			if err != nil {
@@ -101,7 +101,7 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 func validateAndProcessCassandraParams(params CassandraParams) (err error) {
 
 	var InvalidCassandraRL = errors.New("invalid_rate_limiter_for_cassandra")
-	var InvalidClusterKey = errors.New("invalid_cluster key")
+	var InvalidClusterKey = errors.New("invalid_cluster_key")
 	var InvalidTableName = errors.New("invalid_table_name")
 
 	if params.Rl == nil {
