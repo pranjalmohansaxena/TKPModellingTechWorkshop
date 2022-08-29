@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/pranjalmohansaxena/TKPModellingTechWorkshop/model"
@@ -30,40 +29,22 @@ func NewPipelineUsecase(param Param) (Usecase, error) {
 }
 
 func (p pipelineUsecase) ProcessData(events []interface{}) {
-	fmt.Println("Received events count: ", len(events))
+	//Print length of events received
 
-	modelInfo := make([]model.DataModel, 0, len(events))
+	// Make data model slice of events length as capacity
 
-	for _, event := range events {
-		var dataModel model.DataModel
+	// Loop through input events, unmarshal Json to looping model and append to model slice
 
-		err := json.Unmarshal(event.([]byte), &dataModel)
+	// Call function processDataToMap(), to process data to map
 
-		if err != nil {
-			fmt.Println("Error while unmarshalling.")
-			continue
-		}
-
-		modelInfo = append(modelInfo, dataModel)
-	}
-
-	// Processing the data to the map
-	data := p.processDataToMap(modelInfo)
-
-	fmt.Println("Triggering the repository to store the data")
-	p.repository.Store(data)
+	// Call Repository Store method with input map data
 
 }
 
 func (p pipelineUsecase) processDataToMap(modelInfo []model.DataModel) []map[string]interface{} {
 	data := []map[string]interface{}{}
 
-	for _, model := range modelInfo {
-		record := map[string]interface{}{}
-		record["pid"] = model.Pid
-		record["recommendedPids"] = model.RecommendedPids
-		data = append(data, record)
-	}
+	// Loop through model slice and add data to []map[string]interface{}
 
 	return data
 }
