@@ -50,6 +50,7 @@ func main() {
 		return
 	}
 	fmt.Println("Subscribed to Kafka Topic: ", topicName)
+
 	fmt.Println("Initializing Datastore Repository Layer... ")
 	session, err := cluster.CreateSession()
 	if err != nil {
@@ -68,15 +69,17 @@ func main() {
 		fmt.Println("Error occurred while initializing Repository Layer as: ", err)
 		return
 	}
+
 	fmt.Println("Initializing Usecase Layer... ")
 	usecaseLayer, err := usecase.NewPipelineUsecase(usecase.Param{
-		Repository: respositoryLayer, // need to pass the repository layer
+		Repository: respositoryLayer,
 	})
 	if err != nil {
 		fmt.Println("Error occurred while initializing Usecase Layer as: ", err)
 		return
 	}
 	fmt.Println("Initialized Usecase Layer: ", usecaseLayer)
+
 	fmt.Println("Initializing Kafka Delivery Layer... ")
 	deliveryLayer, err := delivery.NewKafkaDeliveryLayer(delivery.KafkaDeliveryParams{
 		Consumer:  consumer,
