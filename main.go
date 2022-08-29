@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/tokopedia/TKPModellingTechWorkshop/delivery"
-	"github.com/tokopedia/TKPModellingTechWorkshop/usecase"
+	"github.com/pranjalmohansaxena/TKPModellingTechWorkshop/delivery"
+	"github.com/pranjalmohansaxena/TKPModellingTechWorkshop/usecase"
 )
 
 func main() {

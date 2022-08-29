@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/tokopedia/TKPModellingTechWorkshop/model"
-	"github.com/tokopedia/TKPModellingTechWorkshop/repository"
+	"github.com/pranjalmohansaxena/TKPModellingTechWorkshop/model"
+	"github.com/pranjalmohansaxena/TKPModellingTechWorkshop/repository"
 )
 
 type pipelineUsecase struct {
