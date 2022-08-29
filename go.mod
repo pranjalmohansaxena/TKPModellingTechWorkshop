@@ -1,4 +1,4 @@
-module github.com/tokopedia/TKPModellingTechWorkshop
+module github.com/pranjalmohansaxena/TKPModellingTechWorkshop
 
 go 1.18
 

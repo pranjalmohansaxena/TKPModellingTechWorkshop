@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/tokopedia/TKPModellingTechWorkshop/usecase"
+	"github.com/pranjalmohansaxena/TKPModellingTechWorkshop/usecase"
 )
 
 type KafkaDeliveryParams struct {
@@ -46,7 +46,7 @@ func NewKafkaDeliveryLayer(params KafkaDeliveryParams) (Delivery, error) {
 }
 
 func validateKafkaDeliveryParams(params KafkaDeliveryParams) bool {
-	if params.Consumer == nil || params.Usecase == nil{
+	if params.Consumer == nil || params.Usecase == nil {
 		return false
 	}
 
