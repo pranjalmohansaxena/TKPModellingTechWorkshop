@@ -57,7 +57,7 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 
 	var wg sync.WaitGroup
 	for _, dataRow := range data {
-		var columnName []string
+
 		var onlyColumn []string
 		var args []interface{}
 		var bindValues []string
@@ -66,8 +66,6 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 		dataFields := make(map[string]interface{})
 		for key, value := range dataRow {
 			dataFields[key] = value
-			concat := key + " = ?"
-			columnName = append(columnName, concat)
 			onlyColumn = append(onlyColumn, key)
 			args = append(args, value)
 			bindValues = append(bindValues, "?")

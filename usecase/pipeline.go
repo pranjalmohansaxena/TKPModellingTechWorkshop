@@ -40,7 +40,7 @@ func (p pipelineUsecase) ProcessData(events []interface{}) {
 		err := json.Unmarshal(event.([]byte), &dataModel)
 
 		if err != nil {
-			fmt.Println("Error while unmarshalling.")
+			fmt.Println("Error while unmarshalling.", err)
 			continue
 		}
 
@@ -51,7 +51,10 @@ func (p pipelineUsecase) ProcessData(events []interface{}) {
 	data := p.processDataToMap(modelInfo)
 
 	fmt.Println("Triggering the repository to store the data")
-	p.repository.Store(data)
+	err := p.repository.Store(data)
+	if err != nil {
+		fmt.Println("Error processing Store() method", err)
+	}
 
 }
 
