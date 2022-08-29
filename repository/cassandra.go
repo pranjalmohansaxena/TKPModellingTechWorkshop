@@ -24,6 +24,22 @@ type (
 	}
 )
 
+func NewCassandraRepo(param CassandraParams) (DatastoreRepository, error) {
+	timeout, timeToLive, err := validateAndProcessCassandraParams(param)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &cassandraRepo{
+		rl:           param.Rl,
+		shardDivisor: param.ShardDivisor,
+		tableName:    param.TableName,
+		clusterKey:   param.ClusterKey,
+	}, nil
+
+}
+
 // Store() performs Insert operation to Cassandra for chunk of records
 // repesentated by "data" which is a slice of map[string]interface{}
 // map[string]interface{} denotes a particular Data Row in the below format:
@@ -31,12 +47,12 @@ type (
 // 2. Value: ColumnValue
 func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 
-	var columnName []string
-	var onlyColumn []string
-	var args []interface{}
-	var qm []string
 	var wg sync.WaitGroup
 	for _, dataRow := range data {
+		var columnName []string
+		var onlyColumn []string
+		var args []interface{}
+		var qm []string
 		c.rl.Take()
 		tableName := c.tableName
 		dataFields := make(map[string]interface{})
@@ -71,4 +87,27 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 	}
 	wg.Wait()
 	return err
+}
+
+// Validating the Cassandra Parameters
+func validateAndProcessCassandraParams(params CassandraParams) (err error) {
+
+	var InvalidCassandraRL = errors.New("invalid_rate_limiter_for_cassandra")
+	var InvalidClusterKey = errors.New("invalid_cluster key")
+	var InvalidTableName = errors.New("invalid_table_name")
+
+	if params.Rl == nil {
+		return InvalidCassandraRL
+	}
+
+	if params.ShardDivisor > 1 && params.ClusterKey == "" {
+		return InvalidClusterKey
+	}
+
+	if params.TableName == "" {
+		return InvalidTableName
+	}
+
+	return nil
+
 }
