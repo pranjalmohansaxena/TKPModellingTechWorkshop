@@ -19,7 +19,7 @@ Schema: type Repository interface {
 }
 
 
-Sample Events from Kafa would be of below format
+Sample Events from Kafka would be of below format
 {
     "pid": 123,
     "recommended_pids": [456,789]
