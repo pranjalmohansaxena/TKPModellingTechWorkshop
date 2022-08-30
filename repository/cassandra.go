@@ -78,7 +78,9 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 			}
 
 			shardID := int(clusterID) / c.shardDivisor
-			dataFields["shard_id"] = shardID
+			onlyColumn = append(onlyColumn, "shard_id")
+			args = append(args, shardID)
+			bindValues = append(bindValues, "?")
 		}
 		wg.Add(1)
 		go func() {
