@@ -27,8 +27,8 @@ func main() {
 	cluster.Port = 9042
 	cluster.Keyspace = "streaming_pipeline"
 	cluster.Consistency = gocql.Quorum
-	cluster.ConnectTimeout = time.Second * 1000
-	cluster.Timeout = time.Second * 1000
+	cluster.ConnectTimeout = time.Second * 10
+	cluster.Timeout = time.Second * 10
 	tableName := "pipeline_data"
 	rate := 5
 	keyspace := "streaming_pipeline"
