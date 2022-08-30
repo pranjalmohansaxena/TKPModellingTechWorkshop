@@ -47,5 +47,6 @@ Exercise 6: (Pipeline Flow)
     - ./TKPModellingTechWorkshop
 3. Push message to kafka
     - { "pid": 123, "recommended_pids": [456,789] }
+    - { "pid": 101, "recommended_pids": [102,103] }
 4. Check the data in cassandra
     - Select: SELECT * FROM streaming_pipeline.pipeline_data WHERE pid=123;
