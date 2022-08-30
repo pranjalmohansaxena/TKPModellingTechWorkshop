@@ -1,14 +1,15 @@
+Note: Below exercises are described as per slides
 Exercise 1 (Kafka):
 1. Create Kafka Topic
-    - kafka-topics --create --topic streaming-pipeline --bootstrap-server localhost:9092 / bin/kafka-topics.sh --create --topic streaming-pipeline --bootstrap-server localhost:9092
-    - to check: kafka-topics --describe --topic streaming-pipeline --bootstrap-server localhost:9092/ bin/kafka-topics.sh --describe --topic streaming-pipeline --bootstrap-server localhost:9092
+    - kafka-topics --create --topic streaming-pipeline --bootstrap-server localhost:9092 or bin/kafka-topics.sh --create --topic streaming-pipeline --bootstrap-server localhost:9092
+    - to check: kafka-topics --describe --topic streaming-pipeline --bootstrap-server localhost:9092 or bin/kafka-topics.sh --describe --topic streaming-pipeline --bootstrap-server localhost:9092
 2. Check all Kafka Topics
-    - kafka-topics --bootstrap-server=localhost:9092 --list / bin/kafka-topics.sh --bootstrap-server=localhost:9092 --list
+    - kafka-topics --bootstrap-server=localhost:9092 --list or bin/kafka-topics.sh --bootstrap-server=localhost:9092 --list
 3. Publish Sample Message
-    - kafka-console-producer --broker-list localhost:9092 --topic streaming-pipeline / bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streaming-pipeline
+    - kafka-console-producer --broker-list localhost:9092 --topic streaming-pipeline or bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streaming-pipeline
     - type "hello world"
 4. Consume/check message
-    - kafka-console-consumer --bootstrap-server localhost:9092 --topic streaming-pipeline / bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic streaming-pipeline 
+    - kafka-console-consumer --bootstrap-server localhost:9092 --topic streaming-pipeline or bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic streaming-pipeline 
 
 
 Exercise 2 (Cassandra):
