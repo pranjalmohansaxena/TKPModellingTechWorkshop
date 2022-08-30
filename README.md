@@ -1,21 +1,25 @@
 # TKPModellingTechWorkshop
+This service is for Real-Time Streaming Pipeline Engine for Storing Hundreds Million of Data
+It follows Clean Architecture.
+It has below layers:
 
-Delivery Layer:
-type Delivery interface {
+Delivery Layer: It deals with consuming events from Kafka
+Schema: type Delivery interface {
 	ConsumeEvents(topicName string)
 }
 
-Usecase Layer:
-type Usecase interface {
+Usecase Layer: It deals with processing the Kafka Events and invoking Datastore Repository
+Schema: type Usecase interface {
 	ProcessData(events []interface{})
 }
 
-Repository Layer:
-type Repository interface {
-	Store(data []map[string]interface{})
+Repository Layer: It deals with storing the processed data to Cassandra
+Schema: type Repository interface {
+	Store(data []map[string]interface{}) (err error)
 }
 
-sampleEventFromKafka.json
+
+Sample Events from Kafa would be of below format
 {
     "pid": 123,
     "recommended_pids": [456,789]
