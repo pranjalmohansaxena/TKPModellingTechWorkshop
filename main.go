@@ -13,21 +13,23 @@ import (
 )
 
 func main() {
-	topicName := "demo_topic"
+
+	// kafka connection settings
+	topicName := "streaming-pipeline"
 	bootstrapServers := "127.0.0.1"
 	groupId := "sample_group"
 	autoOffsetReset := "latest"
 	timeout := "10s"
 	batchSize := 2
+
+	// Cassandra connection settings
 	cluster := gocql.NewCluster("127.0.0.1")
 	cluster.Port = 9042
 	cluster.Keyspace = "streaming_pipeline"
 	cluster.Consistency = gocql.Quorum
 	cluster.ConnectTimeout = time.Second * 1000
 	cluster.Timeout = time.Second * 1000
-	shardDivisor := 10
 	tableName := "pipeline_data"
-	clusterKey := "pid"
 	rate := 5
 	keyspace := "streaming_pipeline"
 
@@ -58,12 +60,10 @@ func main() {
 		return
 	}
 	respositoryLayer, err := repository.NewCassandraRepo(repository.CassandraParams{
-		Session:      session,
-		ShardDivisor: shardDivisor,
-		TableName:    tableName,
-		ClusterKey:   clusterKey,
-		Keyspace:     keyspace,
-		Rl:           ratelimit.New(rate),
+		Session:   session,
+		TableName: tableName,
+		Keyspace:  keyspace,
+		Rl:        ratelimit.New(rate),
 	})
 	if err != nil {
 		fmt.Println("Error occurred while initializing Repository Layer as: ", err)

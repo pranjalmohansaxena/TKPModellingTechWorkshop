@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"sync"
 
@@ -12,21 +11,17 @@ import (
 
 type (
 	cassandraRepo struct {
-		session      *gocql.Session
-		shardDivisor int
-		tableName    string
-		clusterKey   string
-		keyspace     string
-		rl           ratelimit.Limiter
+		session   *gocql.Session
+		tableName string
+		keyspace  string
+		rl        ratelimit.Limiter
 	}
 
 	CassandraParams struct {
-		Session      *gocql.Session
-		ShardDivisor int
-		TableName    string
-		ClusterKey   string
-		Keyspace     string
-		Rl           ratelimit.Limiter
+		Session   *gocql.Session
+		TableName string
+		Keyspace  string
+		Rl        ratelimit.Limiter
 	}
 )
 
@@ -38,12 +33,10 @@ func NewCassandraRepo(param CassandraParams) (Repository, error) {
 	}
 
 	return &cassandraRepo{
-		session:      param.Session,
-		rl:           param.Rl,
-		shardDivisor: param.ShardDivisor,
-		tableName:    param.TableName,
-		clusterKey:   param.ClusterKey,
-		keyspace:     param.Keyspace,
+		session:   param.Session,
+		rl:        param.Rl,
+		tableName: param.TableName,
+		keyspace:  param.Keyspace,
 	}, nil
 
 }
@@ -70,16 +63,7 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 			args = append(args, value)
 			bindValues = append(bindValues, "?")
 		}
-		if c.shardDivisor > 1 {
-			clusterID, ok := dataFields[c.clusterKey].(int64)
-			if !ok {
-				fmt.Println("no cluster ID")
-				continue
-			}
 
-			shardID := int(clusterID) / c.shardDivisor
-			dataFields["shard_id"] = shardID
-		}
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
@@ -99,15 +83,10 @@ func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
 func validateAndProcessCassandraParams(params CassandraParams) (err error) {
 
 	var InvalidCassandraRL = errors.New("invalid_rate_limiter_for_cassandra")
-	var InvalidClusterKey = errors.New("invalid_cluster_key")
 	var InvalidTableName = errors.New("invalid_table_name")
 
 	if params.Rl == nil {
 		return InvalidCassandraRL
-	}
-
-	if params.ShardDivisor > 1 && params.ClusterKey == "" {
-		return InvalidClusterKey
 	}
 
 	if params.TableName == "" {
