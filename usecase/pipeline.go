@@ -64,7 +64,7 @@ func (p pipelineUsecase) processDataToMap(modelInfo []model.DataModel) []map[str
 	for _, model := range modelInfo {
 		record := map[string]interface{}{}
 		record["pid"] = model.Pid
-		record["recommendedPids"] = model.RecommendedPids
+		record["recommended_pids"] = model.RecommendedPids
 		data = append(data, record)
 	}
 
