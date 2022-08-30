@@ -2,19 +2,36 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/gocql/gocql"
 	"github.com/pranjalmohansaxena/TKPModellingTechWorkshop/delivery"
+	"github.com/pranjalmohansaxena/TKPModellingTechWorkshop/repository"
 	"github.com/pranjalmohansaxena/TKPModellingTechWorkshop/usecase"
+	"go.uber.org/ratelimit"
 )
 
 func main() {
-	topicName := "demo_topic"
+
+	// kafka connection settings
+	topicName := "streaming-pipeline"
 	bootstrapServers := "127.0.0.1"
 	groupId := "sample_group"
 	autoOffsetReset := "latest"
 	timeout := "10s"
 	batchSize := 2
+
+	// Cassandra connection settings
+	cluster := gocql.NewCluster("127.0.0.1")
+	cluster.Port = 9042
+	cluster.Keyspace = "streaming_pipeline"
+	cluster.Consistency = gocql.Quorum
+	cluster.ConnectTimeout = time.Second * 1000
+	cluster.Timeout = time.Second * 1000
+	tableName := "pipeline_data"
+	rate := 5
+	keyspace := "streaming_pipeline"
 
 	fmt.Println("Initializing Kafka Consumer... ")
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
@@ -36,9 +53,26 @@ func main() {
 	}
 	fmt.Println("Subscribed to Kafka Topic: ", topicName)
 
+	fmt.Println("Initializing Datastore Repository Layer... ")
+	session, err := cluster.CreateSession()
+	if err != nil {
+		fmt.Println("Error occurred while creating cassandra session as: ", err)
+		return
+	}
+	respositoryLayer, err := repository.NewCassandraRepo(repository.CassandraParams{
+		Session:   session,
+		TableName: tableName,
+		Keyspace:  keyspace,
+		Rl:        ratelimit.New(rate),
+	})
+	if err != nil {
+		fmt.Println("Error occurred while initializing Repository Layer as: ", err)
+		return
+	}
+
 	fmt.Println("Initializing Usecase Layer... ")
 	usecaseLayer, err := usecase.NewPipelineUsecase(usecase.Param{
-		Repository: nil, // need to pass the repository layer
+		Repository: respositoryLayer,
 	})
 	if err != nil {
 		fmt.Println("Error occurred while initializing Usecase Layer as: ", err)
