@@ -10,6 +10,7 @@ type Delivery interface {
 	ConsumeEvents(topicName string)
 }
 ```
+<br>
 
 Usecase Layer: It deals with processing the Kafka Events and invoking Datastore Repository <br>
 Schema: 
@@ -18,8 +19,12 @@ type Usecase interface {
 	ProcessData(events []interface{})
 }
 ```
+<br>
 
 Repository Layer: It deals with storing the processed data to Cassandra <br>
+
+<br>
+
 Schema: 
 ```
 type Repository interface {
