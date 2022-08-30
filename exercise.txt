@@ -1,6 +1,7 @@
 Note: These exercises are based upon the presentation slides
 
 Command to connect to docker container of Kafka: docker exec -it -w /opt/bitnami/kafka kafka-server /bin/sh
+Command to stop clients: Ctrl+C
 
 Exercise 1 (Kafka):
 1. Create Kafka Topic
@@ -37,6 +38,7 @@ Exercise 2 (Cassandra):
 
 Command to connect to docker container of Kafka: docker exec -it -w /opt/bitnami/kafka kafka-server /bin/sh
 Command to connect to docker container of Cassandra: docker exec -it cassandra /bin/sh
+Command to stop clients: Ctrl+C
 
 Exercise 6: (Pipeline Flow)
 1. Open kafka producer and consumer
