@@ -2,6 +2,9 @@ package repository
 
 import (
 	"errors"
+	"fmt"
+	"strings"
+	"sync"
 
 	"github.com/gocql/gocql"
 	"go.uber.org/ratelimit"
@@ -45,8 +48,36 @@ func NewCassandraRepo(param CassandraParams) (Repository, error) {
 // 1. Key: ColumnField
 // 2. Value: ColumnValue
 func (c *cassandraRepo) Store(data []map[string]interface{}) (err error) {
+	var wg sync.WaitGroup
 
 	// Loop over data, create column and value variables
+	for _, dataRow := range data {
+		var onlyColumn []string
+		var args []interface{}
+		var bindValues []string
+
+		c.rl.Take()
+		//dataFields := make(map[string]interface{})
+		for key, value := range dataRow {
+			onlyColumn = append(onlyColumn, key)
+			args = append(args, value)
+			bindValues = append(bindValues, "?")
+		}
+
+		wg.Add(1)
+		go func() {
+			// Insert data into database
+			defer wg.Done()
+			queryStmt := "INSERT INTO " + c.keyspace + "." + c.tableName + " (" + strings.Join(onlyColumn, ",") + ") VALUES (" + strings.Join(bindValues, ",") + ");"
+			query := c.session.Query(queryStmt, args...)
+			err := query.Exec()
+			if err != nil {
+				fmt.Println("Error inserting data: ", err)
+			}
+		}()
+	}
+	wg.Wait()
+	return err
 
 	// Call rate limit function
 
